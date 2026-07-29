@@ -4,15 +4,13 @@ use std::net::{Ipv4Addr, SocketAddr, TcpStream, UdpSocket};
 
 pub const PROTOCOL_VERSION: u8 = 3;
 
-/// Puerto UDP de discovery. El PRFC-CC8-2026 fija este valor en 5001 para que
-/// todas las implementaciones del curso se puedan descubrir entre si. Esta
-/// implementacion se desvia a un valor distinto porque, en las maquinas de
-/// desarrollo de este equipo, tanto 5001 (NI Device Manager) como 5000
-/// (lkTimeSync) ya estaban ocupados por software de terceros ajeno al curso.
-/// Cambiar este valor rompe el discovery UDP automatico con implementaciones
-/// de otros grupos que sigan el puerto 5001 del spec (la conexion manual por
-/// IP:puerto no se ve afectada). Ver la nota en PRFC-CC8-2026.md.
-pub const DISCOVERY_PORT: u16 = 15001;
+/// Puerto UDP de discovery. El PRFC-CC8-2026 (§21, §36) fija este valor en
+/// 5001 para que todas las implementaciones del curso se puedan descubrir
+/// entre si. Si en una maquina de desarrollo especifica ese puerto esta
+/// ocupado por otro software, usar conexion manual por IP:puerto en vez de
+/// cambiar esta constante: cambiarla rompe el discovery UDP automatico con
+/// las implementaciones de los demas grupos.
+pub const DISCOVERY_PORT: u16 = 5001;
 
 #[repr(u8)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]

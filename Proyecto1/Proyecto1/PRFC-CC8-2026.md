@@ -15,19 +15,6 @@
 > aclaraciones de redacción mientras los mensajes siguen usando el byte `3`. El
 > byte solo cambia cuando se rompe la compatibilidad.
 
-> ⚠️ **Desviación local de esta implementación (Rust, grupo 1).** Esta copia
-> del documento, la que vive junto al código en `Proyecto1/Proyecto1/`, usa
-> el puerto UDP **`15001`** para el discovery en vez del `5001` que fija el
-> resto de esta sección para todo el curso. El cambio es unilateral de este
-> equipo: en las máquinas de desarrollo, tanto `5001` (ocupado por NI Device
-> Manager) como `5000` (ocupado por lkTimeSync) ya estaban tomados por
-> software de terceros ajeno al curso. **Esto rompe el discovery UDP
-> automático con cualquier implementación de otro grupo que siga el `5001`
-> del spec** — la conexión manual por IP:puerto (TCP `5000`) no se ve
-> afectada. Las copias de este documento fuera de `Proyecto1/` (en la raíz
-> del repo) NO tienen este cambio y siguen reflejando el spec compartido del
-> curso tal cual. Ver `protocol::DISCOVERY_PORT` en el código.
-
 ## Sobre esta versión
 
 Cambia dos cosas respecto de la 2.0:
@@ -405,7 +392,7 @@ Flujo:
 | `countdownSeconds` | 5 | Duración de la cuenta regresiva. |
 | `maximumPlayers` | 100 | Máximo de jugadores simultáneos. |
 | `serverPort` | 5000 | Puerto TCP de la partida. |
-| `discoveryPort` | 5001 (esta implementación usa `15001`, ver nota al inicio del documento) | Puerto UDP del descubrimiento. |
+| `discoveryPort` | 5001 | Puerto UDP del descubrimiento. |
 
 Los valores efectivos viajan en `GAME_STARTED`. El cliente **no** debe asumir los
 valores por defecto: debe leer los que le manda el servidor.
@@ -904,7 +891,7 @@ Después, la prueba de extremo a extremo contra otro proyecto:
 |---|---|
 | Arquitectura | Cliente-servidor |
 | Servidor | Único, no juega, solo muestra |
-| Descubrimiento | UDP broadcast, puerto 5001 (esta implementación: `15001`, ver nota al inicio) |
+| Descubrimiento | UDP broadcast, puerto 5001 |
 | Partida | TCP, puerto 5000 |
 | Formato | Binario, big-endian |
 | Enmarcado TCP | Prefijo de longitud u16 |

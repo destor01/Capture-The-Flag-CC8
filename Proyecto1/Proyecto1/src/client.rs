@@ -197,8 +197,13 @@ fn discover_servers(port: u16) -> io::Result<Vec<DiscoverResponse>> {
     while started.elapsed() < Duration::from_millis(900) {
         if let Ok((size, source)) = socket.recv_from(&mut buf) {
             if let Some(response) = read_discover_packet(&buf[..size], source)? {
-                let key = (response.game_id, response.source.ip(), response.tcp_port);
-                if seen.insert(key) {
+                // Dedupe solo por game_id: una misma partida puede contestar
+                // por varias interfaces de red distintas (VPN, WSL, adaptadores
+                // virtuales, etc.), cada una con una IP de origen diferente. Si
+                // se incluye la IP en la clave, la misma partida aparece
+                // repetida una vez por cada interfaz. El game_id ya identifica
+                // la partida de forma única, así que basta con eso.
+                if seen.insert(response.game_id) {
                     responses.push(response);
                 }
             }

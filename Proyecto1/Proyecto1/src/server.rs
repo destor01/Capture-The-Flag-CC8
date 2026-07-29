@@ -93,6 +93,16 @@ pub fn spawn_server(
         command_tx: command_tx.clone(),
     };
 
+    // El listener TCP se abre primero y con `?`: si el puerto ya está en uso
+    // (por ejemplo porque quedó otro servidor corriendo), `spawn_server`
+    // corta aquí y no llega a levantar el hilo de descubrimiento UDP. Antes
+    // el orden era al revés: el discovery arrancaba antes de saber si el TCP
+    // iba a funcionar, así que un intento fallido de "Crear servidor" dejaba
+    // un hilo de descubrimiento huérfano respondiendo para siempre en
+    // segundo plano — eso era lo que producía servidores duplicados al
+    // buscar desde el cliente.
+    spawn_accept_loop(config.server_port, command_tx.clone())?;
+
     let discovery_warning = spawn_discovery(session.clone()).err().map(|error| {
         eprintln!(
             "Aviso: no se pudo abrir el descubrimiento UDP en el puerto {}: {}",
@@ -103,7 +113,6 @@ pub fn spawn_server(
             config.discovery_port
         )
     });
-    spawn_accept_loop(config.server_port, command_tx.clone())?;
     spawn_game_loop(session, peers, command_rx, ui_tx, discovery_warning);
     Ok(controller)
 }

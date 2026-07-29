@@ -185,6 +185,7 @@ impl GameSession {
         self.tick = 0;
         self.winner_id = None;
         self.players.clear();
+        self.next_player_id = 1;
         self.pending_inputs.clear();
         self.pending_interacts.clear();
         self.flag = Flag {
